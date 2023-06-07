@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
   final ValueNotifier<int> pageIndex = ValueNotifier(0);
   final ValueNotifier<String> title = ValueNotifier("Messages");
 
-  final pages = const [
+  final pages = [
     MessagesPage(),
     NotificationsPage(),
     CallsPage(),
@@ -66,7 +66,8 @@ class HomeScreen extends StatelessWidget {
                     print('The username: ' + userData.username);
 
                     // Show simple welcome text with the fetched userData.
-                    return Text('Welcome ${userData.name}' + '!', style: TextStyle(color: Colors.black));
+                    return Text('Welcome ${userData.name}' + '!',
+                        style: TextStyle(color: Colors.black));
                   },
                 ),
                 Text(
