@@ -13,18 +13,18 @@ import '../models/user_data.dart';
 import '../theme.dart';
 import '../widgets/widgets.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  final String emailOrUsername;
+  HomeScreen({Key? key, required this.emailOrUsername}) : super(key: key);
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final ValueNotifier<int> pageIndex = ValueNotifier(0);
-  final ValueNotifier<String> title = ValueNotifier("Messages");
 
-  final pages = [
-    MessagesPage(),
-    NotificationsPage(),
-    CallsPage(),
-    ContactsPage(),
-  ];
+  final ValueNotifier<String> title = ValueNotifier("Messages");
 
   final pageTitleList = const [
     "Messages",
@@ -40,6 +40,14 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pages = [
+      MessagesPage(
+        emailOrUsername: widget.emailOrUsername,
+      ),
+      NotificationsPage(),
+      CallsPage(),
+      ContactsPage(),
+    ];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,

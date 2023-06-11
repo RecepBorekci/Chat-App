@@ -47,12 +47,14 @@ class SigninScreen extends StatelessWidget {
   }
 
   void signIn(BuildContext context) async {
-    final userDataNotifier = Provider.of<UserDataNotifier>(context, listen: false);
+    final userDataNotifier =
+        Provider.of<UserDataNotifier>(context, listen: false);
     final emailOrUsername = getEmailOrUsername(context);
     final password = getPassword(context);
 
     // Assuming you have a method to check the sign-in credentials and retrieve user data
-    bool isSignInSuccessful = await databaseHelper.checkSignInCredentials(emailOrUsername, password);
+    bool isSignInSuccessful =
+        await databaseHelper.checkSignInCredentials(emailOrUsername, password);
 
     if (isSignInSuccessful) {
       // Example of updating user data in UserDataNotifier
@@ -60,7 +62,10 @@ class SigninScreen extends StatelessWidget {
 
       // Example of navigating to the home screen with the updated user data
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(
+            builder: (context) => HomeScreen(
+                  emailOrUsername: emailOrUsername,
+                )),
       );
     } else {
       // Handle sign-in failure
@@ -83,7 +88,6 @@ class SigninScreen extends StatelessWidget {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -113,9 +117,7 @@ class SigninScreen extends StatelessWidget {
                 controller: passwordController,
                 obscureText: true,
                 autocorrect: false,
-                decoration: InputDecoration(
-                    label: Text('Password')
-                ),
+                decoration: InputDecoration(label: Text('Password')),
                 onChanged: (value) {
                   password = value;
                 },
@@ -126,80 +128,84 @@ class SigninScreen extends StatelessWidget {
                   if (emailOrUsernameController.text.isNotEmpty) {
                     if (passwordController.text.isNotEmpty) {
                       if (passwordController.text.length > 5) {
+                        await context
+                            .read<UserDataNotifier>()
+                            .signInUser(emailOrUsername);
 
-                        await context.read<UserDataNotifier>().signInUser(emailOrUsername);
+                        bool isEmailInput = isEmail(emailOrUsername);
 
-                            bool isEmailInput = isEmail(emailOrUsername);
+                        for (var userData in allUserDatas) {
+                          var username = userData.username;
+                          var email = userData.email;
+                          var DBpassword = userData.password;
 
-                            for (var userData in allUserDatas) {
-                              var username = userData.username;
-                              var email = userData.email;
-                              var DBpassword = userData.password;
-
-                              if ((isEmailInput && emailOrUsername == email) || (!isEmailInput && emailOrUsername == username)) {
-                                if (password == DBpassword) {
-                                  print('Sign in successful. Username: $username');
-                                  // TODO: Remove parameters and use ValueListenables instead. CHECKED ✅
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
-                                } else {
-                                  print('Incorrect password. Try again.');
-                                }
-                                return; // Exit the loop since a match is found
-                              }
+                          if ((isEmailInput && emailOrUsername == email) ||
+                              (!isEmailInput && emailOrUsername == username)) {
+                            if (password == DBpassword) {
+                              print('Sign in successful. Username: $username');
+                              // TODO: Remove parameters and use ValueListenables instead. CHECKED ✅
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => HomeScreen(
+                                        emailOrUsername: emailOrUsername,
+                                      )));
+                            } else {
+                              print('Incorrect password. Try again.');
                             }
+                            return; // Exit the loop since a match is found
+                          }
+                        }
 
-                            // If the loop completes without finding a match, it means the email/username is incorrect
-                            print('Incorrect email/username. Try again.');
+                        // If the loop completes without finding a match, it means the email/username is incorrect
+                        print('Incorrect email/username. Try again.');
 
+                        // dynamic users;
+                        // db.createConnection().then((conn) async {
+                        //   // value is an email.
+                        //   users = await db.findUsersByEmail(conn!, emailOrUsername);
+                        //
+                        //   for (var row in users) {
+                        //     var name = row[1];
+                        //     var username = row[2];
+                        //     var email = row[4];
+                        //
+                        //     var DBpassword = row[5];
+                        //
+                        //     print(emailOrUsername);
+                        //     print(email);
+                        //     print(DBpassword);
+                        //     print(password);
+                        //
+                        //
+                        //     if (emailOrUsername == email && password == DBpassword) {
+                        //       print('Email is correct. Signing in...' + row[2]);
+                        //       // TODO: Remove parameters and use ValueListenables instead.
+                        //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+                        //     } else {
+                        //       print('Wrong email. Try again');
+                        //     }
+                        //   }
+                        // });
 
-                          // dynamic users;
-                          // db.createConnection().then((conn) async {
-                          //   // value is an email.
-                          //   users = await db.findUsersByEmail(conn!, emailOrUsername);
-                          //
-                          //   for (var row in users) {
-                          //     var name = row[1];
-                          //     var username = row[2];
-                          //     var email = row[4];
-                          //
-                          //     var DBpassword = row[5];
-                          //
-                          //     print(emailOrUsername);
-                          //     print(email);
-                          //     print(DBpassword);
-                          //     print(password);
-                          //
-                          //
-                          //     if (emailOrUsername == email && password == DBpassword) {
-                          //       print('Email is correct. Signing in...' + row[2]);
-                          //       // TODO: Remove parameters and use ValueListenables instead.
-                          //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
-                          //     } else {
-                          //       print('Wrong email. Try again');
-                          //     }
-                          //   }
-                          // });
-
-                          // db.createConnection().then((conn) async {
-                          //   // value is a username.
-                          //   users = await db.findUsersByUsername(conn!, emailOrUsername);
-                          //
-                          //   for (var row in users) {
-                          //
-                          //     var name = row[1];
-                          //     var username = row[2];
-                          //     var email = row[4];
-                          //     var DBpassword = row[5];
-                          //
-                          //     if (username == emailOrUsername  && DBpassword == password) {
-                          //       print('Username is correct. Signing in...' + username);
-                          //       // TODO: Remove parameters and use ValueListenables instead.
-                          //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
-                          //     } else {
-                          //       print('Wrong username. Try again');
-                          //     }
-                          //   }
-                          // });
+                        // db.createConnection().then((conn) async {
+                        //   // value is a username.
+                        //   users = await db.findUsersByUsername(conn!, emailOrUsername);
+                        //
+                        //   for (var row in users) {
+                        //
+                        //     var name = row[1];
+                        //     var username = row[2];
+                        //     var email = row[4];
+                        //     var DBpassword = row[5];
+                        //
+                        //     if (username == emailOrUsername  && DBpassword == password) {
+                        //       print('Username is correct. Signing in...' + username);
+                        //       // TODO: Remove parameters and use ValueListenables instead.
+                        //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+                        //     } else {
+                        //       print('Wrong username. Try again');
+                        //     }
+                        //   }
+                        // });
                       }
                     }
                   }
@@ -210,7 +216,8 @@ class SigninScreen extends StatelessWidget {
                   Text('Not have account?'),
                   TextButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
                           return SignupScreen();
                         }));
                       },
@@ -220,7 +227,9 @@ class SigninScreen extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return HomeScreen();
+                    return HomeScreen(
+                      emailOrUsername: emailOrUsername,
+                    );
                   }));
                 },
                 child: Text('Go to Main Screen'),
@@ -228,7 +237,6 @@ class SigninScreen extends StatelessWidget {
             ],
           ),
         ),
-
       ),
     );
   }

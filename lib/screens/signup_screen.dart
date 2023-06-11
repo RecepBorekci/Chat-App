@@ -15,7 +15,6 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-
   // Initialize all necessary variables.
   DatabaseHelper db = DatabaseHelper();
 
@@ -49,56 +48,47 @@ class _SignupScreenState extends State<SignupScreen> {
                 controller: nameController,
                 keyboardType: TextInputType.text,
                 autocorrect: true,
-                decoration: InputDecoration(
-                    label: Text('Name')
-                ),
+                decoration: InputDecoration(label: Text('Name')),
               ),
               TextField(
                 controller: usernameController,
                 keyboardType: TextInputType.text,
                 autocorrect: false,
-                decoration: InputDecoration(
-                    label: Text('Username')
-                ),
+                decoration: InputDecoration(label: Text('Username')),
               ),
               TextField(
                 controller: phoneNumberController,
                 keyboardType: TextInputType.number,
                 autocorrect: true,
-                decoration: InputDecoration(
-                    label: Text('Phone number')
-                ),
+                decoration: InputDecoration(label: Text('Phone number')),
               ),
               TextField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,
-                decoration: InputDecoration(
-                    label: Text('Email')
-                ),
+                decoration: InputDecoration(label: Text('Email')),
               ),
               TextField(
                 controller: passwordController,
                 obscureText: true,
                 autocorrect: false,
-                decoration: InputDecoration(
-                    label: Text('Password')
-                ),
+                decoration: InputDecoration(label: Text('Password')),
               ),
               TextField(
                 controller: retypePasswordController,
                 obscureText: true,
                 autocorrect: false,
-                decoration: InputDecoration(
-                    label: Text('Retype Password')
-                ),
+                decoration: InputDecoration(label: Text('Retype Password')),
               ),
               TextButton(
                 onPressed: () async {
                   // Nested if loops check that required boxes are filled before authentication.
                   if (usernameController.text.isNotEmpty) {
-                    if (phoneNumberController.text.isNotEmpty && emailController.text.isNotEmpty) {
-                      if (passwordController.text.isNotEmpty && retypePasswordController.text.isNotEmpty && passwordController.text.length > 5) {
+                    if (phoneNumberController.text.isNotEmpty &&
+                        emailController.text.isNotEmpty) {
+                      if (passwordController.text.isNotEmpty &&
+                          retypePasswordController.text.isNotEmpty &&
+                          passwordController.text.length > 5) {
                         name = nameController.text;
                         username = usernameController.text;
                         phoneNumber = phoneNumberController.text.trim();
@@ -111,13 +101,19 @@ class _SignupScreenState extends State<SignupScreen> {
 
                         // If all conditions met, add the user to the database and go the main screen.
                         if (password == retypePassword) {
-                          var userDataNotifier = Provider.of<UserDataNotifier>(context, listen: false);
-                          await userDataNotifier.createUserData(name, username, phoneNumber, email, password, null);
+                          var userDataNotifier = Provider.of<UserDataNotifier>(
+                              context,
+                              listen: false);
+                          await userDataNotifier.createUserData(name, username,
+                              phoneNumber, email, password, null);
 
                           print('Sign up successful. Username: $username');
 
                           // TODO: Remove parameters and use ValueListenables instead. CHECKED ✅
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => HomeScreen(
+                                    emailOrUsername: email,
+                                  )));
                         } else {
                           print('Passwords do not match');
                         }
@@ -130,8 +126,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   } else {
                     print('Username is required');
                   }
-
-              },
+                },
                 child: Text('SIGN UP'),
               ),
               Row(
@@ -139,10 +134,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   Text('Already have account?'),
                   TextButton(
                       onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return SigninScreen();
-                    }));
-                  },
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return SigninScreen();
+                        }));
+                      },
                       child: Text('Log in'))
                 ],
               ),
