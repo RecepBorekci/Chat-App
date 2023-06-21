@@ -97,11 +97,13 @@ class _DemoMessageListState extends State<_DemoMessageList> {
   @override
   void initState() {
     super.initState();
-    // Scroll to the bottom when the widget is first built
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _scrollToBottom();
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _scrollToBottom();
+      }
+    });
   }
+
 
   @override
   void dispose() {
@@ -118,10 +120,13 @@ class _DemoMessageListState extends State<_DemoMessageList> {
   }
 
   Widget build(BuildContext context) {
+    final messageDataNotifier = context.watch<MessageDataNotifier>();
+    context.read<MessageDataNotifier>().receiveNewMessage();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: StreamBuilder<List<MessageData2>>(
-        stream: context.watch<MessageDataNotifier>().messageStream,
+        stream: messageDataNotifier.messageStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<MessageData2> messages = snapshot.data!;
@@ -166,6 +171,7 @@ class _DemoMessageListState extends State<_DemoMessageList> {
     );
   }
 }
+
 
 enum MessageType {
   received,

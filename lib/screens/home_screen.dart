@@ -60,7 +60,6 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 0.0),
                   child: Text(
                     'Welcome ${signedInUser!.name}!',
-                    style: TextStyle(color: Colors.black),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -99,13 +98,13 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 25.0),
-            child: Avatar.small(
-              url:
-                  "https://talhakarakoyunlu.github.io/cv/images/talha%20profile%20picture.png",
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(right: 25.0),
+          //   child: Avatar.small(
+          //     url:
+          //         "https://talhakarakoyunlu.github.io/cv/images/talha%20profile%20picture.png",
+          //   ),
+          // ),
         ],
       ),
       body: ValueListenableBuilder(
@@ -172,16 +171,17 @@ class _BottomNavigationBarState extends State<_BottomNavigationBar> {
                 onTap: handleItemSelected,
                 isSelected: (selectedIndex == 1),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
-                child: GlowingActionButton(
-                  color: AppColors.secondary,
-                  icon: CupertinoIcons.add,
-                  onPressed: () {
-                    print("TODO on new message");
-                  },
-                ),
-              ),
+              // Causes to overflow in the screen
+              // Padding(
+              //   padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
+              //   child: GlowingActionButton(
+              //     color: AppColors.secondary,
+              //     icon: CupertinoIcons.add,
+              //     onPressed: () {
+              //       print("TODO on new message");
+              //     },
+              //   ),
+              // ),
               _NavigationBarItem(
                 label: "Calls",
                 icon: CupertinoIcons.phone_fill,

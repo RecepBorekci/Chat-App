@@ -17,10 +17,12 @@ class MessageDataNotifier with ChangeNotifier {
   DatabaseHelper _databaseHelper = DatabaseHelper();
   Stream<List<MessageData2>> get messageStream => _messageController.stream;
 
-
+  MessageDataNotifier() {
+    // Initialize the stream with the current state of _messages
+    _messageController.add(List<MessageData2>.from(_messages));
+  }
 
   Future<void> addNewMessage(String message, int senderId, int receiverId, String status) async {
-
     try {
       Results messageRows = await _databaseHelper.sendMessage(message, senderId, receiverId, status);
 
@@ -41,16 +43,16 @@ class MessageDataNotifier with ChangeNotifier {
       print(newMessage.created_at);
 
       _messages.add(newMessage);
-      _messageController.add(_messages);
+      _messageController.add(List<MessageData2>.from(_messages)); // Update the stream with the modified _messages list
+      notifyListeners();
 
     } catch (e) {
       print('Error adding a new message: $e');
     }
-
   }
 
-  Future<void> showAllMessages(int senderId, int receiverId) async {
 
+  Future<void> showAllMessages(int senderId, int receiverId) async {
     try {
       Results senderMessageRows = await _databaseHelper.showMessages(senderId, receiverId);
       Results receiverMessageRows = await _databaseHelper.showMessages(receiverId, senderId);
@@ -86,12 +88,17 @@ class MessageDataNotifier with ChangeNotifier {
       allMessages.sort((a, b) => a.created_at.compareTo(b.created_at));
 
       _messages = allMessages;
-      _messageController.add(_messages);
+      _messageController.add(List<MessageData2>.from(_messages)); // Update the stream with the retrieved messages
+      notifyListeners();
 
     } catch (e) {
       print('Error displaying messages: $e');
     }
+  }
 
+  // Method to receive a new message
+  void receiveNewMessage() {
+    _messageController.add(List<MessageData2>.from(_messages)); // Update the stream with the new message
   }
 
 }

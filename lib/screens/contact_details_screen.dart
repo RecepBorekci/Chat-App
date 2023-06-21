@@ -19,7 +19,6 @@ const contactCustomNameTextStyle = TextStyle(
 );
 
 const contactNameTextStyle = TextStyle(
-  color: Colors.black,
   fontSize: 15.0,
 );
 
@@ -118,108 +117,110 @@ class ContactDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Avatar(
-                    radius: 100,
-                    url: 'https://picsum.photos/200',
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  Text(
-                    contactName,
-                    style: contactCustomNameTextStyle,
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  Text(
-                    contact?.contactUser!.name ?? '',
-                    style: contactNameTextStyle,
-                  ),
-                ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Avatar(
+                      radius: 100,
+                      url: 'https://picsum.photos/200',
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Text(
+                      contactName,
+                      style: contactCustomNameTextStyle,
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Text(
+                      contact?.contactUser!.name ?? '',
+                      style: contactNameTextStyle,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Divider(
-              color: AppColors.secondary,
-              thickness: 3.0,
-              indent: 15.0,
-              endIndent: 15.0,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ContactWidgetButton(
-                    buttonIcon: Icon(Icons.call),
-                    buttonName: 'Call',
-                    buttonAction: () {},
-                  ),
-                  ContactWidgetButton(
-                    buttonIcon: Icon(Icons.message),
-                    buttonName: 'Message',
-                    buttonAction: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-
-                        context.read<MessageDataNotifier>().showAllMessages(signedInUser!.id, contact!.contactUser!.id);
-
-                        return ChatScreenTest(signedInUserData: signedInUser, contactData: contact);
-                      }));
-                    },
-                  ),
-                  ContactWidgetButton(
-                    buttonIcon: Icon(Icons.email),
-                    buttonName: 'Email',
-                    buttonAction: () {},
-                  ),
-                ],
+              Divider(
+                color: AppColors.secondary,
+                thickness: 3.0,
+                indent: 15.0,
+                endIndent: 15.0,
               ),
-            ),
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 30.0,
-                    bottom: 10,
-                  ),
-                  child: Text(
-                    "More User Information",
-                    style: TextStyle(
-                      fontSize: 20,
-                      letterSpacing: 0.3,
-                      fontWeight: FontWeight.bold,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ContactWidgetButton(
+                      buttonIcon: Icon(Icons.call),
+                      buttonName: 'Call',
+                      buttonAction: () {},
+                    ),
+                    ContactWidgetButton(
+                      buttonIcon: Icon(Icons.message),
+                      buttonName: 'Message',
+                      buttonAction: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+
+                          context.read<MessageDataNotifier>().showAllMessages(signedInUser!.id, contact!.contactUser!.id);
+
+                          return ChatScreenTest(signedInUserData: signedInUser, contactData: contact);
+                        }));
+                      },
+                    ),
+                    ContactWidgetButton(
+                      buttonIcon: Icon(Icons.email),
+                      buttonName: 'Email',
+                      buttonAction: () {},
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 30.0,
+                      bottom: 10,
+                    ),
+                    child: Text(
+                      "More User Information",
+                      style: TextStyle(
+                        fontSize: 20,
+                        letterSpacing: 0.3,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.person),
-                  title: Text(contact?.contactUser!.username ?? ''),
-                  subtitle: Text('Username'),
-                ),
-                ListTile(
-                  leading: Icon(Icons.email),
-                  title: Text(contact?.contactUser!.email ?? ''),
-                  subtitle: Text('Email'),
-                ),
-                ListTile(
-                  leading: Icon(Icons.phone),
-                  title: Text(contact?.contactUser!.phoneNumber ?? ''),
-                  subtitle: Text('Phone Number'),
-                ),
-              ],
-            ),
-          ],
+                  ListTile(
+                    leading: Icon(Icons.person),
+                    title: Text(contact?.contactUser!.username ?? ''),
+                    subtitle: Text('Username'),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.email),
+                    title: Text(contact?.contactUser!.email ?? ''),
+                    subtitle: Text('Email'),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.phone),
+                    title: Text(contact?.contactUser!.phoneNumber ?? ''),
+                    subtitle: Text('Phone Number'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
