@@ -11,7 +11,7 @@ import 'screens/conversation.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(
     MultiProvider(
       providers: [

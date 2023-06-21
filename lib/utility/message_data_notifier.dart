@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:mysql1/mysql1.dart';
 import '../models/contact_data.dart';
@@ -7,16 +9,20 @@ import 'database_helper.dart';
 
 class MessageDataNotifier with ChangeNotifier {
 
+  final _messageController = StreamController<List<MessageData2>>.broadcast();
+
   List<MessageData2> _messages = [];
   List<MessageData2> get messages => _messages;
 
   DatabaseHelper _databaseHelper = DatabaseHelper();
+  Stream<List<MessageData2>> get messageStream => _messageController.stream;
+
+
 
   Future<void> addNewMessage(String message, int senderId, int receiverId, String status) async {
 
     try {
       Results messageRows = await _databaseHelper.sendMessage(message, senderId, receiverId, status);
-
 
       late MessageData2 newMessage;
 
@@ -35,6 +41,7 @@ class MessageDataNotifier with ChangeNotifier {
       print(newMessage.created_at);
 
       _messages.add(newMessage);
+      _messageController.add(_messages);
 
     } catch (e) {
       print('Error adding a new message: $e');
@@ -79,6 +86,7 @@ class MessageDataNotifier with ChangeNotifier {
       allMessages.sort((a, b) => a.created_at.compareTo(b.created_at));
 
       _messages = allMessages;
+      _messageController.add(_messages);
 
     } catch (e) {
       print('Error displaying messages: $e');

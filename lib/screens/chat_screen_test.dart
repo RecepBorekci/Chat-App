@@ -82,45 +82,87 @@ class ChatScreenTest extends StatelessWidget {
   }
 }
 
-class _DemoMessageList extends StatelessWidget {
+class _DemoMessageList extends StatefulWidget {
   const _DemoMessageList({required this.senderId});
 
   final int senderId;
 
   @override
+  State<_DemoMessageList> createState() => _DemoMessageListState();
+}
+
+class _DemoMessageListState extends State<_DemoMessageList> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Scroll to the bottom when the widget is first built
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollToBottom();
+    // });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
   Widget build(BuildContext context) {
-
-    List<MessageData2> messages = context.watch<MessageDataNotifier>().messages;
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: ListView.builder(
-        itemCount: messages.length > 0 ? messages.length : 1,
-        itemBuilder: (context, index) {
-          if (messages.length > 0) {
-            MessageData2 message = messages[index];
-            if (message.sender_id == senderId) {
-              return MessageTile(
-                message: message.message,
-                messageDate: message.created_at.toString(),
-                messageType: MessageType.sent,
-              );
-            } else {
-              return MessageTile(
-                message: message.message,
-                messageDate: message.created_at.toString(),
-                messageType: MessageType.received,
-              );
-            }
+      child: StreamBuilder<List<MessageData2>>(
+        stream: context.watch<MessageDataNotifier>().messageStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<MessageData2> messages = snapshot.data!;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToBottom();
+            });
+            return ListView.builder(
+              controller: _scrollController,
+              itemCount: messages.length > 0 ? messages.length : 1,
+              itemBuilder: (context, index) {
+                if (messages.length > 0) {
+                  MessageData2 message = messages[index];
+                  if (message.sender_id == widget.senderId) {
+                    return MessageTile(
+                      message: message.message,
+                      messageDate: message.created_at.toString(),
+                      messageType: MessageType.sent,
+                    );
+                  } else {
+                    return MessageTile(
+                      message: message.message,
+                      messageDate: message.created_at.toString(),
+                      messageType: MessageType.received,
+                    );
+                  }
+                } else {
+                  return Center(
+                    child: ListTile(
+                      title: Text("No messages available"),
+                    ),
+                  );
+                }
+              },
+            );
           } else {
             return Center(
-              child: ListTile(
-                title: Text("No messages available"),
-              ),
+              child: CircularProgressIndicator(),
             );
           }
         },
-      )
+      ),
     );
   }
 }
@@ -369,7 +411,6 @@ class _ActionBar extends StatelessWidget {
   final int senderId;
   final int receiverId;
 
-
   @override
   Widget build(BuildContext context) {
     TextEditingController messageController = TextEditingController();
@@ -418,6 +459,7 @@ class _ActionBar extends StatelessWidget {
 
                 //TODO: Send a message. DONE✅
                 context.read<MessageDataNotifier>().addNewMessage(messageController.text, senderId, receiverId, 'sent');
+                messageController.clear();
 
               },
             ),
